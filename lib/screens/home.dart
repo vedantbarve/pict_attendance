@@ -1,6 +1,8 @@
 import 'package:beamer/beamer.dart';
-import 'package:dart_ipify/dart_ipify.dart';
+
 import 'package:flutter/material.dart';
+
+import 'package:get_ip_address/get_ip_address.dart';
 import 'package:pict_attendance/global/dialogues.dart';
 import 'package:pict_attendance/services/device/location_controller.dart';
 import 'package:pict_attendance/services/device/preferences_controller.dart';
@@ -27,12 +29,13 @@ class _HomeViewState extends State<HomeView> {
   }
 
   initialize() async {
+    var ipAddress = IpAddress(type: RequestType.text);
     final name = await PrefsController().getName();
     final rollNo = await PrefsController().getRollNo();
-    final ip = await Ipify.ipv4();
+    final ip = await ipAddress.getIpAddress();
     if (name != null) _name.text = name;
     if (rollNo != null) _rollNo.text = rollNo;
-    _ipAddress.text = ip;
+    _ipAddress.text = ip ?? "Something went wrong";
   }
 
   @override
@@ -83,6 +86,7 @@ class _HomeViewState extends State<HomeView> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text(
           "PICT ATTENDANCE",
@@ -94,19 +98,21 @@ class _HomeViewState extends State<HomeView> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(
-          children: [
-            const SizedBox(height: 200),
-            NameField(name: _name),
-            RollNoField(rollNo: _rollNo),
-            IpAddressField(ipAddress: _ipAddress),
-            const SizedBox(height: 50),
-            RoomCodeField(roomCode: _roomCode),
-            ElevatedButton(
-              onPressed: roomAction,
-              child: const Text('Enter room'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 200),
+              NameField(name: _name),
+              RollNoField(rollNo: _rollNo),
+              IPAddressField(ipaddress: _ipAddress),
+              const SizedBox(height: 50),
+              RoomCodeField(roomCode: _roomCode),
+              ElevatedButton(
+                onPressed: roomAction,
+                child: const Text('Enter room'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -179,10 +185,10 @@ class RollNoField extends StatelessWidget {
   }
 }
 
-class IpAddressField extends StatelessWidget {
-  const IpAddressField({Key? key, required this.ipAddress}) : super(key: key);
+class IPAddressField extends StatelessWidget {
+  const IPAddressField({Key? key, required this.ipaddress}) : super(key: key);
 
-  final TextEditingController ipAddress;
+  final TextEditingController ipaddress;
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +196,7 @@ class IpAddressField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: TextFormField(
         enabled: false,
-        controller: ipAddress,
+        controller: ipaddress,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'This field is compulsory';

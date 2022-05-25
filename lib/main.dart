@@ -46,6 +46,9 @@ class RootWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      scrollBehavior: const ScrollBehavior().copyWith(
+        physics: const BouncingScrollPhysics(),
+      ),
       debugShowCheckedModeBanner: false,
       routeInformationParser: BeamerParser(),
       routerDelegate: routeDelegate,

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dart_ipify/dart_ipify.dart';
 import 'package:get/get.dart';
+import 'package:get_ip_address/get_ip_address.dart';
 import 'package:pict_attendance/models/room_model.dart';
 import 'package:pict_attendance/models/student_model.dart';
 
 class RoomController extends GetxController {
+  String ipAddress = "";
+
   Stream readParticipants(RoomModel room) {
     final _firestore = FirebaseFirestore.instance;
     var data = _firestore
@@ -21,7 +23,8 @@ class RoomController extends GetxController {
 
   Future removeUser(String roomId) async {
     try {
-      final ip = await Ipify.ipv4();
+      var ipAddress = IpAddress(type: RequestType.text);
+      final ip = ipAddress.getIpAddress();
       final _firestore = FirebaseFirestore.instance;
       await _firestore.doc("rooms/$roomId/participants/$ip").delete();
     } catch (err) {
