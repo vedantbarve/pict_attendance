@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class StudentModel {
   dynamic name;
-  dynamic regNo;
+  dynamic ipAddress;
   dynamic rollNo;
   dynamic latitude;
   dynamic longitude;
@@ -10,7 +10,7 @@ class StudentModel {
 
   StudentModel({
     required this.name,
-    required this.regNo,
+    required this.ipAddress,
     required this.rollNo,
     required this.latitude,
     required this.longitude,
@@ -20,7 +20,7 @@ class StudentModel {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'regNo': regNo,
+      'ipAddress': ipAddress,
       'rollNo': rollNo,
       'latitude': latitude,
       'longitude': longitude,
@@ -31,7 +31,7 @@ class StudentModel {
   factory StudentModel.fromMap(Map<String, dynamic> map) {
     return StudentModel(
       name: map['name'],
-      regNo: map['regNo'],
+      ipAddress: map['ipAddress'],
       rollNo: map['rollNo'],
       latitude: map['latitude'],
       longitude: map['longitude'],

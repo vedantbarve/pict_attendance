@@ -1,7 +1,6 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 
-class GetLocation extends GetxController {
+class GetLocation {
   final geolocator = GeolocatorPlatform.instance;
 
   Future<bool> get getLocationStatus async {
