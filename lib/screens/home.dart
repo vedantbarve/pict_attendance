@@ -3,10 +3,11 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get_ip_address/get_ip_address.dart';
-import 'package:pict_attendance/global/dialogues.dart';
-import 'package:pict_attendance/services/device/location_controller.dart';
-import 'package:pict_attendance/services/device/preferences_controller.dart';
-import 'package:pict_attendance/services/firebase/room_controller.dart';
+
+import '../global/dialogues.dart';
+import '../services/device/location_controller.dart';
+import '../services/device/preferences_controller.dart';
+import '../services/firebase/room_controller.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -46,33 +47,34 @@ class _HomeViewState extends State<HomeView> {
         await PrefsController().setRollNo(_rollNo.text);
         await PrefsController().setRegNo(_ipAddress.text);
         var roomData = await RoomController().getRoomData(_roomCode.text);
+        var userLocation = await GetLocation().getUserLocation();
         if (roomData == null) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return CustomDialogue(
-                content: "Room ${_roomCode.text} does not exist",
-              );
-            },
-          );
+          debugPrint("Null room data guard clause");
           return;
         }
-        var userLocation = await GetLocation().getUserLocation();
+        if (userLocation == null) {
+          debugPrint("Null user location guard clause");
+          return;
+        }
         var distance = GetLocation().distance(
-          userLocation!["latitude"],
+          userLocation["latitude"],
           userLocation["longitude"],
           roomData.roomLat,
           roomData.roomLong,
         );
-        print(distance);
         if (distance! < 2000) {
-          RoomController().addUserToRoom(
-            _name.text,
-            _rollNo.text,
-            _ipAddress.text,
-            _roomCode.text,
-          );
-          context.beamToReplacementNamed('/room/${roomData.roomId}');
+          if (roomData.isActive) {
+            RoomController().addUserToRoom(
+              _name.text,
+              _rollNo.text,
+              _ipAddress.text,
+              _roomCode.text,
+            );
+            context.beamToReplacementNamed('/room/${roomData.roomId}');
+          } else {
+            debugPrint("Closed room guard clause");
+            return;
+          }
         } else {
           showDialog(
             context: context,

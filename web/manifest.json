@@ -1,6 +1,6 @@
 {
-    "name": "pict_attendance",
-    "short_name": "pict_attendance",
+    "name": "PBL-ARM",
+    "short_name": "PBL-ARM",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

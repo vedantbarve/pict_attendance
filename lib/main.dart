@@ -36,7 +36,7 @@ class RootWidget extends StatelessWidget {
           return BeamPage(
             title: 'room',
             popToNamed: '/',
-            child: RoomWidget(roomId: roomId!),
+            child: RoomView(roomId: roomId!),
           );
         },
       },

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_ip_address/get_ip_address.dart';
-import 'package:pict_attendance/models/room_model.dart';
-import 'package:pict_attendance/models/student_model.dart';
+
+import '../../models/room_model.dart';
+import '../../models/student_model.dart';
 
 class RoomController {
-  Stream<QuerySnapshot<StudentModel>> readParticipants(String roomId) {
+  Stream<QuerySnapshot<StudentModel>> getStudentsAsStream(String roomId) {
     final _firestore = FirebaseFirestore.instance;
     var data = _firestore
         .collection("rooms/$roomId/participants")
@@ -28,7 +30,7 @@ class RoomController {
       final _firestore = FirebaseFirestore.instance;
       await _firestore.doc("rooms/$roomId/participants/$ip").delete();
     } catch (err) {
-      print(err);
+      debugPrint(err.toString());
     }
   }
 
@@ -47,7 +49,7 @@ class RoomController {
         },
       );
     } catch (err) {
-      print(err);
+      debugPrint(err.toString());
     }
   }
 
@@ -73,7 +75,7 @@ class RoomController {
         return RoomModel.fromMap(data!);
       }
     } catch (err) {
-      print(err);
+      debugPrint(err.toString());
     }
     return null;
   }

@@ -1,4 +1,4 @@
-# pict_attendance
+# PBL-ARM
 
 A new Flutter project.
 
