@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 import 'package:get_ip_address/get_ip_address.dart';
 import 'package:pict_attendance/models/room_model.dart';
 import 'package:pict_attendance/models/student_model.dart';
 
-class RoomController extends GetxController {
-  String ipAddress = "";
-
-  Stream readParticipants(RoomModel room) {
+class RoomController {
+  Stream<QuerySnapshot<StudentModel>> readParticipants(String roomId) {
     final _firestore = FirebaseFirestore.instance;
     var data = _firestore
-        .collection("rooms/${room.roomId}/participants")
+        .collection("rooms/$roomId/participants")
         .withConverter<StudentModel>(
-          fromFirestore: (snapshot, _) =>
-              StudentModel.fromMap(snapshot.data()!),
-          toFirestore: (model, _) => model.toMap(),
+          fromFirestore: (snapshot, _) {
+            return StudentModel.fromMap(snapshot.data()!);
+          },
+          toFirestore: (model, _) {
+            return model.toMap();
+          },
         )
         .orderBy("rollNo")
         .snapshots();
@@ -24,7 +24,7 @@ class RoomController extends GetxController {
   Future removeUser(String roomId) async {
     try {
       var ipAddress = IpAddress(type: RequestType.text);
-      final ip = ipAddress.getIpAddress();
+      final ip = await ipAddress.getIpAddress();
       final _firestore = FirebaseFirestore.instance;
       await _firestore.doc("rooms/$roomId/participants/$ip").delete();
     } catch (err) {
@@ -33,10 +33,14 @@ class RoomController extends GetxController {
   }
 
   Future addUserToRoom(
-      String name, String rollNo, String regNo, String roomId) async {
+    String name,
+    String rollNo,
+    String ipAddress,
+    String roomId,
+  ) async {
     try {
       final _firestore = FirebaseFirestore.instance;
-      await _firestore.collection("rooms/$roomId/participants").doc(regNo).set(
+      await _firestore.doc("rooms/$roomId/participants/$ipAddress").set(
         {
           "name": name,
           "rollNo": rollNo,
@@ -47,13 +51,25 @@ class RoomController extends GetxController {
     }
   }
 
+  Stream<DocumentSnapshot<RoomModel>> getRoomDataAsStream(String roomId) {
+    final _firestore = FirebaseFirestore.instance;
+    var data = _firestore.doc("rooms/$roomId").withConverter<RoomModel>(
+      fromFirestore: (snapshot, _) {
+        return RoomModel.fromMap(snapshot.data()!);
+      },
+      toFirestore: (model, _) {
+        return model.toMap();
+      },
+    ).snapshots();
+    return data;
+  }
+
   Future<RoomModel?> getRoomData(String roomId) async {
     try {
       final _firestore = FirebaseFirestore.instance;
-      var roomData = await _firestore.collection("rooms").doc(roomId).get();
+      var roomData = await _firestore.doc("rooms/$roomId").get();
       if (roomData.exists) {
         final data = roomData.data();
-        print(data);
         return RoomModel.fromMap(data!);
       }
     } catch (err) {

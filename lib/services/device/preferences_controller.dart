@@ -1,7 +1,6 @@
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PrefsController extends GetxController {
+class PrefsController {
   Future<String?> getName() async {
     try {
       final pref = await SharedPreferences.getInstance();

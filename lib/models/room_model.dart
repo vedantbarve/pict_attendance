@@ -6,7 +6,9 @@ class RoomModel {
   dynamic mentorId;
   dynamic roomLat;
   dynamic roomLong;
-  dynamic participants;
+  dynamic roomLimit;
+  dynamic subject;
+  dynamic isActive;
 
   RoomModel({
     required this.roomId,
@@ -14,7 +16,9 @@ class RoomModel {
     required this.mentorId,
     required this.roomLat,
     required this.roomLong,
-    required this.participants,
+    this.roomLimit,
+    this.subject,
+    this.isActive,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,7 +28,9 @@ class RoomModel {
       'mentorId': mentorId,
       'roomLat': roomLat,
       'roomLong': roomLong,
-      'participants': participants,
+      'roomLimit': roomLimit,
+      'isActive': isActive,
+      'subject': subject,
     };
   }
 
@@ -35,7 +41,9 @@ class RoomModel {
       mentorId: map['mentorId'],
       roomLat: map['roomLat'],
       roomLong: map['roomLong'],
-      participants: map['participants'],
+      roomLimit: map['roomLimit'],
+      isActive: map['isActive'] as bool,
+      subject: map['subject'],
     );
   }
 

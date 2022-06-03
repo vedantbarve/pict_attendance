@@ -58,21 +58,21 @@ class _HomeViewState extends State<HomeView> {
           return;
         }
         var userLocation = await GetLocation().getUserLocation();
-        print(userLocation);
         var distance = GetLocation().distance(
           userLocation!["latitude"],
           userLocation["longitude"],
           roomData.roomLat,
           roomData.roomLong,
         );
-        if (distance! < 5000) {
+        print(distance);
+        if (distance! < 2000) {
           RoomController().addUserToRoom(
             _name.text,
             _rollNo.text,
             _ipAddress.text,
             _roomCode.text,
           );
-          context.beamToNamed('/room/${roomData.roomId}');
+          context.beamToReplacementNamed('/room/${roomData.roomId}');
         } else {
           showDialog(
             context: context,
@@ -81,7 +81,6 @@ class _HomeViewState extends State<HomeView> {
             },
           );
         }
-        print(distance);
       }
     }
 
@@ -101,7 +100,7 @@ class _HomeViewState extends State<HomeView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 200),
+              const SizedBox(height: 100),
               NameField(name: _name),
               RollNoField(rollNo: _rollNo),
               IPAddressField(ipaddress: _ipAddress),
