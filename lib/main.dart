@@ -1,8 +1,8 @@
 import 'package:beamer/beamer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screens/home.dart';
-import 'screens/room.dart';
+import 'screens/home/home.dart';
+import 'screens/room/room.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
@@ -48,6 +48,44 @@ class RootWidget extends StatelessWidget {
     return MaterialApp.router(
       scrollBehavior: const ScrollBehavior().copyWith(
         physics: const BouncingScrollPhysics(),
+      ),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        textTheme: const TextTheme(
+          headlineLarge: TextStyle(fontFamily: 'Poppins'),
+          headlineMedium: TextStyle(fontFamily: 'Poppins'),
+          headlineSmall: TextStyle(fontFamily: 'Poppins'),
+          labelLarge: TextStyle(fontFamily: 'Poppins'),
+          labelMedium: TextStyle(fontFamily: 'Poppins'),
+          labelSmall: TextStyle(fontFamily: 'Poppins'),
+          bodyLarge: TextStyle(fontFamily: 'Poppins'),
+          bodyMedium: TextStyle(fontFamily: 'Poppins'),
+          bodySmall: TextStyle(fontFamily: 'Poppins'),
+          titleLarge: TextStyle(fontFamily: 'Poppins'),
+          titleMedium: TextStyle(fontFamily: 'Poppins'),
+          titleSmall: TextStyle(fontFamily: 'Poppins'),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            textStyle: MaterialStateProperty.all(
+              const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+              ),
+            ),
+            padding: MaterialStateProperty.all(
+              const EdgeInsets.symmetric(
+                horizontal: 32,
+                vertical: 16,
+              ),
+            ),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+          ),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       routeInformationParser: BeamerParser(),

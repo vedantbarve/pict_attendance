@@ -33,7 +33,6 @@ class GetLocation {
   Future<Map?> getUserLocation() async {
     try {
       Position? position = await geolocator.getCurrentPosition();
-
       return {
         "latitude": position.latitude,
         "longitude": position.longitude,

@@ -6,7 +6,7 @@ import '../../models/room_model.dart';
 import '../../models/student_model.dart';
 
 class RoomController {
-  Stream<QuerySnapshot<StudentModel>> getStudentsAsStream(String roomId) {
+  Stream<QuerySnapshot<StudentModel>?> getStudentsAsStream(String roomId) {
     final _firestore = FirebaseFirestore.instance;
     var data = _firestore
         .collection("rooms/$roomId/participants")
@@ -46,6 +46,7 @@ class RoomController {
         {
           "name": name,
           "rollNo": rollNo,
+          "ipAddress": ipAddress,
         },
       );
     } catch (err) {
@@ -53,7 +54,7 @@ class RoomController {
     }
   }
 
-  Stream<DocumentSnapshot<RoomModel>> getRoomDataAsStream(String roomId) {
+  Stream<DocumentSnapshot<RoomModel>?> getRoomDataAsStream(String roomId) {
     final _firestore = FirebaseFirestore.instance;
     var data = _firestore.doc("rooms/$roomId").withConverter<RoomModel>(
       fromFirestore: (snapshot, _) {
