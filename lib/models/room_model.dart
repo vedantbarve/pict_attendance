@@ -6,9 +6,12 @@ class RoomModel {
   dynamic mentorId;
   dynamic roomLat;
   dynamic roomLong;
-  dynamic roomLimit;
+  dynamic radius;
   dynamic subject;
+  dynamic division;
+  dynamic batch;
   dynamic isActive;
+  dynamic timeStamp;
 
   RoomModel({
     required this.roomId,
@@ -16,9 +19,12 @@ class RoomModel {
     required this.mentorId,
     required this.roomLat,
     required this.roomLong,
-    this.roomLimit,
+    this.radius,
     this.subject,
+    required this.division,
+    required this.batch,
     this.isActive,
+    required this.timeStamp,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,9 +34,12 @@ class RoomModel {
       'mentorId': mentorId,
       'roomLat': roomLat,
       'roomLong': roomLong,
-      'roomLimit': roomLimit,
-      'isActive': isActive,
+      'radius': radius,
       'subject': subject,
+      'division': division,
+      'batch': batch,
+      'isActive': isActive,
+      'timeStamp': timeStamp,
     };
   }
 
@@ -41,9 +50,12 @@ class RoomModel {
       mentorId: map['mentorId'],
       roomLat: map['roomLat'],
       roomLong: map['roomLong'],
-      roomLimit: map['roomLimit'],
-      isActive: map['isActive'] as bool,
+      radius: map['radius'],
       subject: map['subject'],
+      division: map['division'],
+      batch: map['batch'],
+      isActive: map['isActive'],
+      timeStamp: map['timeStamp'],
     );
   }
 

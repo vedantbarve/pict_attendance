@@ -1,9 +1,10 @@
-import 'package:PBL_ARM/screens/home/widgets.dart';
 import 'package:beamer/beamer.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:get_ip_address/get_ip_address.dart';
+import 'package:lottie/lottie.dart';
+import 'package:pbl_arm/screens/home/widgets.dart';
 import '../../services/device/location_controller.dart';
 import '../../services/device/preferences_controller.dart';
 import '../../services/firebase/room_controller.dart';
@@ -41,76 +42,157 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     roomAction() async {
-      if (_formKey.currentState!.validate()) {
-        await PrefsController().setName(_name.text);
-        await PrefsController().setRollNo(_rollNo.text);
-        await PrefsController().setRegNo(_ipAddress.text);
-        var roomData = await RoomController().getRoomData(_roomCode.text);
-        var userLocation = await GetLocation().getUserLocation();
-        if (userLocation == null) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return const ErrorDialogue(
-                title: 'Oops!',
-                errorMessage: 'There was some error fetching your location.',
-              );
-            },
-          );
-          return;
-        }
-        if (roomData == null) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialogue(
-                title: 'Oops!',
-                errorMessage: 'Room ${_roomCode.text} was not found',
-              );
-            },
-          );
-          return;
-        }
-
-        var distance = GetLocation().distance(
-          userLocation["latitude"],
-          userLocation["longitude"],
-          roomData.roomLat,
-          roomData.roomLong,
-        );
-
-        if (distance! < 5) {
-          if (roomData.isActive) {
-            await RoomController().addUserToRoom(
-              _name.text,
-              _rollNo.text,
-              _ipAddress.text,
-              _roomCode.text,
-            );
-            context.beamToReplacementNamed('/room/${roomData.roomId}');
-          } else {
+      try {
+        if (_formKey.currentState!.validate()) {
+          await PrefsController().setName(_name.text);
+          await PrefsController().setRollNo(_rollNo.text);
+          await PrefsController().setRegNo(_ipAddress.text);
+          var roomData = await RoomController().getRoomData(_roomCode.text);
+          var userLocation = await GetLocation().getUserLocation();
+          if (userLocation == null) {
             showDialog(
               context: context,
               builder: (context) {
-                return ErrorDialogue(
+                return const ErrorDialogue(
                   title: 'Oops!',
-                  errorMessage: 'Room ${roomData.roomId} seems to be closed',
+                  errorMessage: 'There was some error fetching your location.',
                 );
               },
             );
             return;
           }
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return const ErrorDialogue(
-                title: 'Oops!',
-                errorMessage: 'Seems like you are outside the room',
-              );
-            },
+          if (roomData == null) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "assets/lottie/notfound.gif",
+                        height: 200,
+                        width: 200,
+                        fit: BoxFit.contain,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Room not Found!'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+            return;
+          }
+
+          var distance = GetLocation().distance(
+            userLocation["latitude"],
+            userLocation["longitude"],
+            roomData.roomLat,
+            roomData.roomLong,
           );
+
+          if (distance! < roomData.radius) {
+            if (roomData.isActive) {
+              await RoomController().addUserToRoom(
+                _name.text,
+                _rollNo.text,
+                _ipAddress.text,
+                _roomCode.text,
+              );
+              context.beamToReplacementNamed('/room/${roomData.roomId}');
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          "assets/lottie/closed.gif",
+                          height: 200,
+                          width: 200,
+                          fit: BoxFit.contain,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Looks like the room is closed'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+              return;
+            }
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text(
+                    "Looks like you are outside the classroom ",
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "assets/lottie/distance.gif",
+                        height: 200,
+                        width: 200,
+                        fit: BoxFit.contain,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Distance = $distance \n Latitude =${userLocation["latitude"]} \n Longitude =${userLocation["longitude"]}',
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          }
         }
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    "assets/lottie/notfound.gif",
+                    height: 200,
+                    width: 200,
+                    fit: BoxFit.contain,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Oops unknown error occured'),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       }
     }
 

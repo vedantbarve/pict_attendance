@@ -1,10 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pbl_arm/models/location_model.dart';
 
 class GetLocation {
   final geolocator = GeolocatorPlatform.instance;
 
   Future<bool> get getLocationStatus async {
     return await geolocator.isLocationServiceEnabled();
+  }
+
+  getLocationAsStream(String roomId) async {
+    geolocator.getPositionStream().listen(
+      (event) async {
+        await FirebaseFirestore.instance.collection("rooms").doc(roomId).set(
+          {
+            "latitude": event.latitude,
+            "longitude": event.longitude,
+          },
+          SetOptions(merge: true),
+        );
+      },
+    );
   }
 
   Future requestLocationPermission() async {
@@ -25,7 +42,7 @@ class GetLocation {
         endLong,
       );
     } catch (err) {
-      print(err);
+      debugPrint(err.toString());
     }
     return null;
   }
@@ -39,7 +56,7 @@ class GetLocation {
         "altitude": position.altitude,
       };
     } catch (err) {
-      print(err);
+      debugPrint(err.toString());
     }
     return null;
   }
